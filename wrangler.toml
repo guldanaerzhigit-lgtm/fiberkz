@@ -5,7 +5,7 @@ compatibility_date = "2026-10-27"
 [[d1_databases]]
 binding = "DB"
 database_name = "fiberkz-db"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "83bcc09b-19a1-43d1-ac9d-0a32f279f6f6"
 
 [[r2_buckets]]
 binding = "PHOTOS"
