@@ -10,10 +10,22 @@ export default {
     const url = new URL(request.url);
     if (request.method === "OPTIONS") return new Response(null, { headers });
     if (url.pathname === "/" && request.method === "GET") {
-      return json({ ok: true, service: "FiberKZ API", version: "0.1.1", routes: ["/api/health", "/api/jobs"] });
+      return json({ ok: true, service: "FiberKZ API", version: "0.2.0", routes: ["/api/health", "/api/jobs", "/api/checklist"] });
     }
     try {
-      if (url.pathname === "/api/health") return json({ ok: true, service: "FiberKZ API", version: "0.1.1" });
+      if (url.pathname === "/api/health") return json({ ok: true, service: "FiberKZ API", version: "0.2.0" });
+      if (url.pathname === "/api/checklist" && request.method === "GET") {
+        const result = await env.DB.prepare("SELECT value FROM app_settings WHERE key = ?").bind("ont-checklist").first();
+        return json({ checked: result ? JSON.parse(result.value) : [] });
+      }
+      if (url.pathname === "/api/checklist" && request.method === "POST") {
+        const body = await request.json();
+        if (!Array.isArray(body.checked) || body.checked.length > 50 || body.checked.some(x => typeof x !== "string")) {
+          return json({ error: "checked must be an array of strings" }, 400);
+        }
+        await env.DB.prepare("INSERT INTO app_settings(key,value,updated_at) VALUES(?,?,datetime('now')) ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=datetime('now')").bind("ont-checklist", JSON.stringify(body.checked)).run();
+        return json({ ok: true, checked: body.checked });
+      }
       if (url.pathname === "/api/jobs" && request.method === "GET") {
         const result = await env.DB.prepare("SELECT id,address,work_type,technology,status,assigned_to,created_at FROM jobs ORDER BY created_at DESC LIMIT 100").all();
         return json({ jobs: result.results });
