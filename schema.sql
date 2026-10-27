@@ -42,3 +42,9 @@ CREATE TABLE IF NOT EXISTS job_photos (
 CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status);
 CREATE INDEX IF NOT EXISTS idx_jobs_assigned_to ON jobs(assigned_to);
 CREATE INDEX IF NOT EXISTS idx_events_job_id ON job_events(job_id);
+
+CREATE TABLE IF NOT EXISTS app_settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL,
+  updated_at TEXT NOT NULL DEFAULT(datetime('now'))
+);
