@@ -1,4 +1,4 @@
-name = "fiberkz-api"
+name = "fiberkz"
 main = "worker/index.js"
 compatibility_date = "2026-10-27"
 
