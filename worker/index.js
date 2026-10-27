@@ -37,6 +37,7 @@ export default {
         await env.DB.prepare("INSERT INTO jobs(id,address,work_type,technology,status,created_at) VALUES(?,?,?,?,?,datetime('now'))").bind(id, body.address, body.work_type, body.technology || "GPON", "new").run();
         return json({ id, status: "new" }, 201);
       }
+      if (!url.pathname.startsWith("/api/") && env.ASSETS) return env.ASSETS.fetch(request);
       return json({ error: "Not found", path: url.pathname }, 404);
     } catch (error) {
       console.error("FiberKZ API error", error);
